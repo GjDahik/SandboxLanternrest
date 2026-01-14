@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel Generator - Mapa Sandbox Lanternrest</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        .excel-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11px;
+        }
+        
+        .excel-table th, .excel-table td {
+            border: 1px solid #ccc;
+            padding: 4px;
+            text-align: center;
+            vertical-align: middle;
+            height: 30px;
+        }
+        
+        .excel-table th {
+            background-color: #34495e;
+            color: white;
+            font-weight: bold;
+            font-size: 10px;
+        }
+        
+        /* Colores por anillo */
+        .ring1 { background-color: #d5f4e6; color: #27ae60; font-weight: bold; }
+        .ring2 { background-color: #ffeaa7; color: #f39c12; font-weight: bold; }
+        .ring3 { background-color: #fab1a0; color: #e17055; font-weight: bold; }
+        .ring4 { background-color: #fd79a8; color: #e84393; font-weight: bold; }
+        .ring5 { background-color: #fdcb6e; color: #e17055; font-weight: bold; }
+        .ring6 { background-color: #a29bfe; color: #6c5ce7; font-weight: bold; }
+        .ring7 { background-color: #ff7675; color: #d63031; font-weight: bold; }
+        .ring8 { background-color: #2d3436; color: #ddd; font-weight: bold; }
+        
+        /* Colores por tipo de terreno */
+        .water { background-color: #74b9ff; color: white; }
+        .mountain { background-color: #636e72; color: white; }
+        .ruins { background-color: #a29bfe; color: white; }
+        .magic { background-color: #fd79a8; color: white; }
+        .center { background-color: #fdcb6e; color: #2d3436; font-weight: bold; }
+        
+        /* Conexiones */
+        .easy { border-left: 4px solid #00b894; }
+        .normal { border-left: 4px solid #fdcb6e; }
+        .hard { border-left: 4px solid #e17055; }
+        .danger { border-left: 4px solid #d63031; }
+        
+        .legend {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .legend-section {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+        
+        .color-box {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+        }
+        
+        .instructions {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .download-section {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 10px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🗺️ Excel Generator - Mapa Sandbox Lanternrest</h1>
+        
+        <div class="instructions">
+            <h3>📋 Cómo usar:</h3>
+            <p>1. Copia las tablas de abajo y péga en Excel</p>
+            <p>2. Aplica los colores según la leyenda</p>
+            <p>3. Ajusta anchos de columna para mejor visualización</p>
+            <p>4. Usa filtros para encontrar zonas por nivel o tipo</p>
+        </div>
+
+        <h2>📊 HOJA 1: ÍNDICE GENERAL DE ZONAS</h2>
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ZONA</th>
+                    <th>DESCRIPCIÓN</th>
+                    <th>ANILLO</th>
+                    <th>NIVEL</th>
+                    <th>TIPO</th>
+                    <th>RUTA</th>
+                    <th>RECURSOS</th>
+                    <th>PELIGRO</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="center">
+                    <td>CENTRO</td>
+                    <td>Lanternrest</td>
+                    <td>El Faro - Pueblo base</td>
+                    <td>0</td>
+                    <td>Safe</td>
+                    <td>🏘️ Pueblo</td>
+                    <td>-</td>
+                    <td>Descanso, Comercio, NPCs</td>
+                    <td>Ninguno</td>
+                </tr>
+                <tr class="ring1">
+                    <td>N1</td>
+                    <td>Reedbank Bend</td>
+                    <td>Curva del río; cañas que tintinean</td>
+                    <td>1</td>
+                    <td>1-2</td>
+                    <td>🌊 Agua</td>
+                    <td>Norte</td>
+                    <td>Agua pura, mapas de río</td>
+                    <td>Bajo</td>
+                </tr>
+                <tr class="ring1">
+                    <td>E1</td>
+                    <td>Deertrail Glade</td>
+                    <td>Claros con huellas en espiral</td>
+                    <td>1</td>
+                    <td>1-2</td>
+                    <td>⛰️ Montaña</td>
+                    <td>Este</td>
+                    <td>Caza, rastro, guías</td>
+                    <td>Bajo</td>
+                </tr>
+                <tr class="ring1">
+                    <td>S1</td>
+                    <td>Honeyhush Copse</td>
+                    <td>Colmenas mansas; miel tibia</td>
+                    <td>1</td>
+                    <td>1-2</td>
+                    <td>✨ Mágico</td>
+                    <td>Sur</td>
+                    <td>Miel curativa, druidas</td>
+                    <td>Bajo</td>
+                </tr>
+                <tr class="ring1">
+                    <td>W1</td>
+                    <td>Millrun Channels</td>
+                    <td>Acequias que aparecen donde no deben</td>
+                    <td>1</td>
+                    <td>1-2</td>
+                    <td>🌊 Agua</td>
+                    <td>Oeste</td>
+                    <td>Agua pura, mapas locales</td>
+                    <td>Bajo</td>
+                </tr>
+                <tr class="ring2">
+                    <td>N2</td>
+                    <td>Foxfire Thicket</td>
+                    <td>Lucecitas guían... mal</td>
+                    <td>2</td>
+                    <td>3-4</td>
+                    <td>✨ Mágico</td>
+                    <td>Norte</td>
+                    <td>Wisps, información</td>
+                    <td>Medio</td>
+                </tr>
+                <tr class="ring2">
+                    <td>E2</td>
+                    <td>Thornsinger Hedge</td>
+                    <td>Zarzas que separan en pasillos</td>
+                    <td>2</td>
+                    <td>3-4</td>
+                    <td>✨ Mágico</td>
+                    <td>Este</td>
+                    <td>Espinas mágicas, laberinto</td>
+                    <td>Medio</td>
+                </tr>
+                <tr class="ring2">
+                    <td>S2</td>
+                    <td>Blackbark Hollows</td>
+                    <td>Resina negra valiosa; depredadores</td>
+                    <td>2</td>
+                    <td>3-4</td>
+                    <td>⛰️ Montaña</td>
+                    <td>Sur</td>
+                    <td>Resina mágica, componentes</td>
+                    <td>Medio</td>
+                </tr>
+                <tr class="ring2">
+                    <td>W2</td>
+                    <td>Cedar-Split Yard</td>
+                    <td>Campamento abandonado con órdenes</td>
+                    <td>2</td>
+                    <td>3-4</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Oeste</td>
+                    <td>Equipo abandonado, refugio</td>
+                    <td>Medio</td>
+                </tr>
+                <tr class="ring3">
+                    <td>N3</td>
+                    <td>Leechfield Flats</td>
+                    <td>Terreno blando; algo se alimenta del ruido</td>
+                    <td>3</td>
+                    <td>5-7</td>
+                    <td>🌊 Agua</td>
+                    <td>Norte</td>
+                    <td>Sanguijuelas medicinales</td>
+                    <td>Alto</td>
+                </tr>
+                <tr class="ring3">
+                    <td>E3</td>
+                    <td>Glasswater Reach</td>
+                    <td>Agua espejo; refleja escenas falsas</td>
+                    <td>3</td>
+                    <td>5-7</td>
+                    <td>🌊 Agua</td>
+                    <td>Este</td>
+                    <td>Visiones, profecías</td>
+                    <td>Alto</td>
+                </tr>
+                <tr class="ring3">
+                    <td>S3</td>
+                    <td>Crooked Canoe Marsh</td>
+                    <td>Canoas clavadas apuntando al Faro</td>
+                    <td>3</td>
+                    <td>5-7</td>
+                    <td>🌊 Agua</td>
+                    <td>Sur</td>
+                    <td>Transporte acuático</td>
+                    <td>Alto</td>
+                </tr>
+                <tr class="ring3">
+                    <td>W3</td>
+                    <td>Fogfen Steps</td>
+                    <td>Piedras-escalón cambian de lugar</td>
+                    <td>3</td>
+                    <td>5-7</td>
+                    <td>🌊 Agua</td>
+                    <td>Oeste</td>
+                    <td>Piedras levitantes</td>
+                    <td>Alto</td>
+                </tr>
+                <tr class="ring4">
+                    <td>N4</td>
+                    <td>Cairnwatch Bluffs</td>
+                    <td>Túmulos; sensación de ser observado</td>
+                    <td>4</td>
+                    <td>8-10</td>
+                    <td>⛰️ Montaña</td>
+                    <td>Norte</td>
+                    <td>Entierros antiguos, vigilancia</td>
+                    <td>Alto</td>
+                </tr>
+                <tr class="ring4">
+                    <td>E4</td>
+                    <td>Ashcap Caves</td>
+                    <td>Hongos ceniza; recurso útil, aire peligroso</td>
+                    <td>4</td>
+                    <td>8-10</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Este</td>
+                    <td>Hongos raros, minerales</td>
+                    <td>Alto</td>
+                </tr>
+                <tr class="ring4">
+                    <td>S4</td>
+                    <td>Howlstone Rise</td>
+                    <td>Aullidos sin animales; eco inteligente</td>
+                    <td>4</td>
+                    <td>8-10</td>
+                    <td>⛰️ Montaña</td>
+                    <td>Sur</td>
+                    <td>Ecos místicos, comunicación</td>
+                    <td>Alto</td>
+                </tr>
+                <tr class="ring4">
+                    <td>W4</td>
+                    <td>Splitroot Ravine</td>
+                    <td>Raíces-puente aparecen sin dudas</td>
+                    <td>4</td>
+                    <td>8-10</td>
+                    <td>⛰️ Montaña</td>
+                    <td>Oeste</td>
+                    <td>Puentes vivos, paso seguro</td>
+                    <td>Alto</td>
+                </tr>
+                <tr class="ring5">
+                    <td>N5</td>
+                    <td>Tanglefort</td>
+                    <td>Fortín tragado por raíces; órdenes en piedra</td>
+                    <td>5</td>
+                    <td>11-13</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Norte</td>
+                    <td>Armas antiguas, órdenes militares</td>
+                    <td>Muy Alto</td>
+                </tr>
+                <tr class="ring5">
+                    <td>E5</td>
+                    <td>Bridge Missing Planks</td>
+                    <td>Puente incompleto; cambia cuando mirás</td>
+                    <td>5</td>
+                    <td>11-13</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Este</td>
+                    <td>Ingeniería antigua, paso</td>
+                    <td>Muy Alto</td>
+                </tr>
+                <tr class="ring5">
+                    <td>S5</td>
+                    <td>Lanterngrave Mile</td>
+                    <td>Faroles rotos; uno prende con ámbar</td>
+                    <td>5</td>
+                    <td>11-13</td>
+                    <td>✨ Mágico</td>
+                    <td>Sur</td>
+                    <td>Ámbar mágico, iluminación</td>
+                    <td>Muy Alto</td>
+                </tr>
+                <tr class="ring5">
+                    <td>W5</td>
+                    <td>Pillarway Ruins</td>
+                    <td>Columnas antiguas, símbolos repetidos</td>
+                    <td>5</td>
+                    <td>11-13</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Oeste</td>
+                    <td>Conocimiento arcano, rituales</td>
+                    <td>Muy Alto</td>
+                </tr>
+                <tr class="ring6">
+                    <td>N6</td>
+                    <td>Mouth of the Deep</td>
+                    <td>Grieta caliente; olor a hierro viejo</td>
+                    <td>6</td>
+                    <td>14-16</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Norte</td>
+                    <td>Acceso subterráneo, metales</td>
+                    <td>Extremo</td>
+                </tr>
+                <tr class="ring6">
+                    <td>E6</td>
+                    <td>Starless Pool</td>
+                    <td>Lago donde el cielo no existe</td>
+                    <td>6</td>
+                    <td>14-16</td>
+                    <td>🌊 Agua</td>
+                    <td>Este</td>
+                    <td>Portal estelar, viaje planar</td>
+                    <td>Extremo</td>
+                </tr>
+                <tr class="ring6">
+                    <td>S6</td>
+                    <td>The Fallen Watch</td>
+                    <td>Ruina alta; sombras largas al mediodía</td>
+                    <td>6</td>
+                    <td>14-16</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Sur</td>
+                    <td>Vigilancia, torres de señales</td>
+                    <td>Extremo</td>
+                </tr>
+                <tr class="ring6">
+                    <td>W6</td>
+                    <td>Whitebark Silence</td>
+                    <td>Bosque sin pájaros; el sonido se apaga</td>
+                    <td>6</td>
+                    <td>14-16</td>
+                    <td>✨ Mágico</td>
+                    <td>Oeste</td>
+                    <td>Cristales silencio, bibliotecas</td>
+                    <td>Extremo</td>
+                </tr>
+                <tr class="ring7">
+                    <td>N7</td>
+                    <td>Breathless Pines</td>
+                    <td>Tus pasos suenan con retraso</td>
+                    <td>7</td>
+                    <td>17-18</td>
+                    <td>✨ Mágico</td>
+                    <td>Norte</td>
+                    <td>Distorsión temporal</td>
+                    <td>Letal</td>
+                </tr>
+                <tr class="ring7">
+                    <td>E7</td>
+                    <td>Owlstone Cross</td>
+                    <td>Cruces de piedra negra; sin sombras</td>
+                    <td>7</td>
+                    <td>17-18</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Este</td>
+                    <td>Rituales oscuros, poder</td>
+                    <td>Letal</td>
+                </tr>
+                <tr class="ring7">
+                    <td>S7</td>
+                    <td>The Wrong Meadow</td>
+                    <td>Pradera perfecta; todo está corrido</td>
+                    <td>7</td>
+                    <td>17-18</td>
+                    <td>✨ Mágico</td>
+                    <td>Sur</td>
+                    <td>Reality bending, ilusiones</td>
+                    <td>Letal</td>
+                </tr>
+                <tr class="ring7">
+                    <td>W7</td>
+                    <td>Lanternrift Fen</td>
+                    <td>Grietas ámbar bajo el agua</td>
+                    <td>7</td>
+                    <td>17-18</td>
+                    <td>🌊 Agua</td>
+                    <td>Oeste</td>
+                    <td>Ámbar planar, energía</td>
+                    <td>Letal</td>
+                </tr>
+                <tr class="ring8">
+                    <td>N8</td>
+                    <td>Far Black Door</td>
+                    <td>Pared de obsidiana; se siente puerta</td>
+                    <td>8</td>
+                    <td>19-20</td>
+                    <td>🏛️ Ruinas</td>
+                    <td>Norte</td>
+                    <td>Portal planar, artefactos</td>
+                    <td>Cósmico</td>
+                </tr>
+                <tr class="ring8">
+                    <td>E8</td>
+                    <td>Hollow Horizon</td>
+                    <td>El mundo se aplana; el río sube</td>
+                    <td>8</td>
+                    <td>19-20</td>
+                    <td>✨ Mágico</td>
+                    <td>Este</td>
+                    <td>Control realidad, ascensión</td>
+                    <td>Cósmico</td>
+                </tr>
+                <tr class="ring8">
+                    <td>S8</td>
+                    <td>The Returning Trail</td>
+                    <td>Caminás y volvés por otro lado</td>
+                    <td>8</td>
+                    <td>19-20</td>
+                    <td>✨ Mágico</td>
+                    <td>Sur</td>
+                    <td>Bucle temporal, escape</td>
+                    <td>Cósmico</td>
+                </tr>
+                <tr class="ring8">
+                    <td>W8</td>
+                    <td>Edge Orchard</td>
+                    <td>Frutos hermosos; borran recuerdos chicos</td>
+                    <td>8</td>
+                    <td>19-20</td>
+                    <td>✨ Mágico</td>
+                    <td>Oeste</td>
+                    <td>Frutos memoria/conocimiento</td>
+                    <td>Cósmico</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>🔗 HOJA 2: CONEXIONES Y RUTAS</h2>
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>DESDE</th>
+                    <th>HASTA</th>
+                    <th>TIPO</th>
+                    <th>DIFICULTAD</th>
+                    <th>TIEMPO</th>
+                    <th>REQUISITOS</th>
+                    <th>DESCRIPCIÓN</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="easy">
+                    <td>CENTRO</td>
+                    <td>N1</td>
+                    <td>Sendero</td>
+                    <td>Fácil</td>
+                    <td>4 horas</td>
+                    <td>Ninguno</td>
+                    <td>Camino del río hacia el norte</td>
+                </tr>
+                <tr class="easy">
+                    <td>CENTRO</td>
+                    <td>E1</td>
+                    <td>Sendero</td>
+                    <td>Fácil</td>
+                    <td>4 horas</td>
+                    <td>Ninguno</td>
+                    <td>Sendero de caza hacia colinas</td>
+                </tr>
+                <tr class="easy">
+                    <td>CENTRO</td>
+                    <td>S1</td>
+                    <td>Sendero</td>
+                    <td>Fácil</td>
+                    <td>4 horas</td>
+                    <td>Ninguno</td>
+                    <td>Camino hacia las colmenas</td>
+                </tr>
+                <tr class="easy">
+                    <td>CENTRO</td>
+                    <td>W1</td>
+                    <td>Canal</td>
+                    <td>Fácil</td>
+                    <td>3 horas</td>
+                    <td>Barca</td>
+                    <td>Acequia principal</td>
+                </tr>
+                <tr class="normal">
+                    <td>N1</td>
+                    <td>E1</td>
+                    <td>Ribera</td>
+                    <td>Normal</td>
+                    <td>6 horas</td>
+                    <td>Survival 10</td>
+                    <td>Sendero de ribera</td>
+                </tr>
+                <tr class="normal">
+                    <td>E1</td>
+                    <td>S1</td>
+                    <td>Caza</td>
+                    <td>Normal</td>
+                    <td>8 horas</td>
+                    <td>Survival 10</td>
+                    <td>Paso de caza</td>
+                </tr>
+                <tr class="normal">
+                    <td>N2</td>
+                    <td>W1</td>
+                    <td>Madera</td>
+                    <td>Normal</td>
+                    <td>1 día</td>
+                    <td>Survival 12</td>
+                    <td>Senda maderera vieja</td>
+                </tr>
+                <tr class="normal">
+                    <td>S2</td>
+                    <td>E3</td>
+                    <td>Canal</td>
+                    <td>Normal</td>
+                    <td>1 día</td>
+                    <td>Navegar</td>
+                    <td>Canal natural/terreno blando</td>
+                </tr>
+                <tr class="normal">
+                    <td>W2</td>
+                    <td>S3</td>
+                    <td>Arrastre</td>
+                    <td>Normal</td>
+                    <td>1 día</td>
+                    <td>Fuerza</td>
+                    <td>Arrastre de canoas antiguo</td>
+                </tr>
+                <tr class="hard">
+                    <td>N3</td>
+                    <td>E4</td>
+                    <td>Trepada</td>
+                    <td>Difícil</td>
+                    <td>2 días</td>
+                    <td>Athletics 15</td>
+                    <td>Trepada a roca/barranco</td>
+                </tr>
+                <tr class="hard">
+                    <td>W3</td>
+                    <td>N4</td>
+                    <td>Túmulos</td>
+                    <td>Difícil</td>
+                    <td>1.5 días</td>
+                    <td>Religion 15</td>
+                    <td>Camino de túmulos</td>
+                </tr>
+                <tr class="normal">
+                    <td>N5</td>
+                    <td>E5</td>
+                    <td>Carretera</td>
+                    <td>Normal</td>
+                    <td>12 horas</td>
+                    <td>Ninguno</td>
+                    <td>Cruce de ruinas: Old Road</td>
+                </tr>
+                <tr class="normal">
+                    <td>S5</td>
+                    <td>W6</td>
+                    <td>Faroles</td>
+                    <td>Normal</td>
+                    <td>1 día</td>
+                    <td>Luz ámbar</td>
+                    <td>Línea de faroles caídos</td>
+                </tr>
+                <tr class="hard">
+                    <td>N6</td>
+                    <td>E6</td>
+                    <td>Sumergida</td>
+                    <td>Difícil</td>
+                    <td>Variable</td>
+                    <td>Respirar agua</td>
+                    <td>Calzada de piedra bajo el agua</td>
+                </tr>
+                <tr class="danger">
+                    <td>W7</td>
+                    <td>N7</td>
+                    <td>Portal</td>
+                    <td>Peligroso</td>
+                    <td>Instantáneo</td>
+                    <td>Ritual</td>
+                    <td>Bruma: te saca en otro lado</td>
+                </tr>
+                <tr class="danger">
+                    <td>N7</td>
+                    <td>S7</td>
+                    <td>Portal</td>
+                    <td>Peligroso</td>
+                    <td>Instantáneo</td>
+                    <td>Ritual</td>
+                    <td>Portal mágico triangle</td>
+                </tr>
+                <tr class="danger">
+                    <td>S7</td>
+                    <td>W7</td>
+                    <td>Portal</td>
+                    <td>Peligroso</td>
+                    <td>Instantáneo</td>
+                    <td>Ritual</td>
+                    <td>Portal mágico triangle</td>
+                </tr>
+                <tr class="danger">
+                    <td>E8</td>
+                    <td>S8</td>
+                    <td>Reality</td>
+                    <td>Peligroso</td>
+                    <td>Variable</td>
+                    <td>Arcana 20</td>
+                    <td>El borde se pliega</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="legend">
+            <div class="legend-section">
+                <h3>🎨 Leyenda de Colores - Anillos</h3>
+                <div class="legend-item">
+                    <div class="color-box ring1"></div>
+                    <span>Anillo 1 (1-2) - Verde claro</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box ring2"></div>
+                    <span>Anillo 2 (3-4) - Amarillo</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box ring3"></div>
+                    <span>Anillo 3 (5-7) - Naranja claro</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box ring4"></div>
+                    <span>Anillo 4 (8-10) - Rosa</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box ring5"></div>
+                    <span>Anillo 5 (11-13) - Naranja</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box ring6"></div>
+                    <span>Anillo 6 (14-16) - Morado claro</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box ring7"></div>
+                    <span>Anillo 7 (17-18) - Rojo claro</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box ring8"></div>
+                    <span>Anillo 8 (19-20) - Negro</span>
+                </div>
+            </div>
+            
+            <div class="legend-section">
+                <h3>🗺️ Leyenda - Tipos de Terreno</h3>
+                <div class="legend-item">
+                    <div class="color-box water"></div>
+                    <span>🌊 Agua/Pantano - Azul</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box mountain"></div>
+                    <span>⛰️ Montaña/Colina - Gris</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box ruins"></div>
+                    <span>🏛️ Ruinas - Morado</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box magic"></div>
+                    <span>✨ Mágico/Anómalo - Rosa</span>
+                </div>
+                <div class="legend-item">
+                    <div class="color-box center"></div>
+                    <span>🏘️ Pueblo - Amarillo</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <h3>📥 Descargar e Importar</h3>
+            <p>Selecciona toda la información de arriba y cópiala en Excel para tener tu mapa completo</p>
+            <button onclick="downloadCSV()">💾 Descargar como CSV</button>
+            <button onclick="copyToClipboard()">📋 Copiar Datos</button>
+        </div>
+
+        <h2>📝 HOJA 3: NOTAS DE CAMPAÑA (Template)</h2>
+        <table class="excel-table">
+            <thead>
+                <tr>
+                    <th>ZONA</th>
+                    <th>VISITADA</th>
+                    <th>NPCs</th>
+                    <th>EVENTOS</th>
+                    <th>SECRETOS</th>
+                    <th>LOOT</th>
+                    <th>NOTAS DM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>N1 - Reedbank Bend</td>
+                    <td>❌</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>E1 - Deertrail Glade</td>
+                    <td>❌</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>S1 - Honeyhush Copse</td>
+                    <td>❌</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>W1 - Millrun Channels</td>
+                    <td>❌</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="instructions">
+            <h3>🎯 Instrucciones Finales:</h3>
+            <p><strong>En Excel:</strong></p>
+            <p>1. Crea 3 hojas: "Zonas", "Conexiones", "Notas Campaña"</p>
+            <p>2. Pega cada tabla en su hoja correspondiente</p>
+            <p>3. Aplica formato condicional con los colores de la leyenda</p>
+            <p>4. Usa filtros para buscar por nivel, tipo o ruta</p>
+            <p>5. La hoja "Notas" sirve para trackear progreso de jugadores</p>
+        </div>
+    </div>
+
+    <script>
+        function downloadCSV() {
+            alert("Para descargar: Selecciona las tablas → Copia → Pega en Excel → Guarda como CSV");
+        }
+        
+        function copyToClipboard() {
+            const tables = document.querySelectorAll('.excel-table');
+            let csvContent = "";
+            
+            tables.forEach((table, index) => {
+                csvContent += `HOJA ${index + 1}\n`;
+                const rows = table.querySelectorAll('tr');
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td, th');
+                    const rowData = Array.from(cells).map(cell => `"${cell.textContent}"`).join(',');
+                    csvContent += rowData + '\n';
+                });
+                csvContent += '\n';
+            });
+            
+            navigator.clipboard.writeText(csvContent).then(() => {
+                alert("¡Datos copiados! Pégalos en Excel");
+            });
+        }
+    </script>
+</body>
+</html>
